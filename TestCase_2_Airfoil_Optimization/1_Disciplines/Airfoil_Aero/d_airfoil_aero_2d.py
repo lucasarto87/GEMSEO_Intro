@@ -4,7 +4,7 @@ import numpy as np
 
 # Add project folders
 root = os.path.dirname(os.path.abspath(__file__).split('TestCase_2_Airfoil_Optimization')[0])
-#sys.path.append(root)
+
 
 from gemseo.core.discipline import MDODiscipline
 from f_airfoil_aero_2d import create_airfoil_geometry, \
@@ -28,9 +28,9 @@ class AirfoilAero2D(MDODiscipline):
 
 
         # Define inputs >> Name, type and default value
-        dictIn = {'m': 2.0,         # maximum airfoil camber
-                  'p': 4.0,         # position of maximum camber
-                  't': 15.0}        # maximum thickness
+        dictIn = {'NACA_M': 2.0,         # maximum airfoil camber
+                  'NACA_P': 4.0,         # position of maximum camber
+                  'NACA_T': 15.0}        # maximum thickness
 
 
         # Initialize input grammar and assign default values
@@ -53,9 +53,9 @@ class AirfoilAero2D(MDODiscipline):
         #------------------------------------------------------------------------------------
         dictIn = self.get_input_data()
 
-        m = dictIn['m']
-        p = dictIn['p']
-        t = dictIn['t']
+        m = dictIn['NACA_M']
+        p = dictIn['NACA_P']
+        t = dictIn['NACA_T']
 
 
         # Create the airfoil geometry and run an XFOIL simulation
@@ -81,14 +81,13 @@ class AirfoilAero2D(MDODiscipline):
         # Send actualized outputs >> to GEMSEO
         # ------------------------------------------------------------------------------------
         dictOut = { 'Alpha' : results['Alpha'],
-                    'CL': results['CL'],
-                    'CD': results['CD'],
+                    'CL'    : results['CL'],
+                    'CD'    : results['CD'],
                     'E_max' : results['E_max']}
 
         # Save the output in the discipline local store >>> Transmit output to GEMSEO
         self.local_data.update(dictOut)
 
-        keyboard()
 
 
 # ----------------------------------------------------------------------------------------
