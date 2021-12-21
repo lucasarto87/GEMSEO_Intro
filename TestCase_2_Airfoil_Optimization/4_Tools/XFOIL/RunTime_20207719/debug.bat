@@ -1,1 +1,0 @@
-start cmd.exe /k "cd.. && xfoil.exe < ./RunTime_20207719/instructions.txt"
