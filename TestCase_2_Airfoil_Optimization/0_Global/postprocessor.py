@@ -112,9 +112,11 @@ class GEMSEOPostProcess():
         the OBSERVABLE specified by the USer in the problem definition)
         :return:
         """
-        print('[' + class_name + ']: Available keys:')
+        print('[' + class_name + ']: Available functions:')
         for func in self.func_names:
             print('\t' + func)
+
+        input('Press ENTER to continue')
 
 
 
