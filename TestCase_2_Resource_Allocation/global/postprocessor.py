@@ -124,7 +124,7 @@ class GEMSEOPostProcess():
         """
         Print a comparison of a set of scalar quantities from 2 different iterations of an optimization
         history.
-        :param lst: a list containing the scalar quantitites to plot
+        :param lst: a list containing the scalar quantities to plot
         :param it1: First iteration to plot (if None, use iteration zero)
         :param it2: Second iteration to plot (if None, use the optimum)
         :return:

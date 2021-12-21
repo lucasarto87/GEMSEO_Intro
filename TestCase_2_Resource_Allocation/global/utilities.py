@@ -1,4 +1,5 @@
 import numpy as np
+from math import floor
 
 def read_resources_specs(res_file):
     """
@@ -27,3 +28,28 @@ def read_resources_specs(res_file):
         resources[tag] = dictRes
 
     return resources
+
+
+def compute_visibility_vector(n_hrs,p):
+
+    # retrieve number of resources
+    n_r = len(p)
+
+    nu = np.zeros((n_r, n_hrs))
+
+    for ir in range(n_r):
+        # Retrieve charge
+        pi = p[ir][0]
+
+        # Full working hours and residual working time
+        n_hrs_i = floor(pi*n_hrs)
+        r_hrs_i = pi*n_hrs - n_hrs_i
+
+        # Fill a '1' in all the full worked hours
+        nu[ir,:n_hrs_i] = 1
+
+        # FIll the residual on the last (partial) hour
+        if n_hrs_i < n_hrs:
+            nu[ir, n_hrs_i] = r_hrs_i
+
+    return nu

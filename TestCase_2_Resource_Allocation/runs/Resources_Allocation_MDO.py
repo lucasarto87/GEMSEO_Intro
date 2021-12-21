@@ -55,7 +55,7 @@ if __name__ == '__main__':
     output = 'resource_allocation_MDO'
 
     # Initialize the disciplines
-    prod  = TDP(N_pcs_target=100)
+    prod  = TDP(N_pcs_target=78)
     costs = TPC()
 
     disciplines = [prod, costs]
