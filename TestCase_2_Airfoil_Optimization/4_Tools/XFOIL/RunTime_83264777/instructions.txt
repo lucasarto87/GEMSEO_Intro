@@ -1,0 +1,17 @@
+load 
+./RunTime_83264777/airfoil_input.dat
+pane 
+oper 
+iter 
+100
+visc 
+3000000
+pacc 
+./RunTime_83264777/polar_output.dat
+
+aseq 
+-5
+15
+1.0
+
+quit
