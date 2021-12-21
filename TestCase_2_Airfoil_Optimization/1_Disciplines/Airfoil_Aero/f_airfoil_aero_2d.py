@@ -19,6 +19,7 @@ def create_XFOIL_input_files(xfoil_path, airfoil_shape, xfoil_set = None):
     Creates the input files which are necessary for XFOIL to run. These are:
     1) A file with the geometry of the airfoil
     2) An instruction file which is used to run XFOIL automatically
+    3) A debug batch file to run an XFOIL analysis outside the optimization loop
     :param xfoil_path: path pointing to XFOIL main folder
     :param airfoil_shape: a list containing (x,y) coordinates of an airfoil
     :param xfoil_set: a dictionary containing some XFOIL settings (i.e. Reynolds etc..)
@@ -30,8 +31,8 @@ def create_XFOIL_input_files(xfoil_path, airfoil_shape, xfoil_set = None):
     xfoil_set_DEFAULT = {'Reynolds'     :   3000000,
                          'NumbIter'     :   100,
                          'Alpha_Min'    :   -5,
-                         'Alpha_Max'    :   10,
-                         'Alpha_Delta'  :   0.5}
+                         'Alpha_Max'    :   15,
+                         'Alpha_Delta'  :   1.0}
 
     if not xfoil_set:
         xfoil_set = xfoil_set_DEFAULT
@@ -72,13 +73,23 @@ def create_XFOIL_input_files(xfoil_path, airfoil_shape, xfoil_set = None):
                       str(xfoil_set['Alpha_Max']) + '\n',
                       str(xfoil_set['Alpha_Delta']) + '\n',
                       '\n',
-                      'exit'
+                      'quit'
                       ]
 
     # Write instructions file
     with open(instr_path, 'w') as f:
         for line in instr_template:
             f.write(line)
+
+    # 3) Write debug batch file
+    # ----------------------------------------------------------------------
+    # If some problems occur in the simulation, this file allows to quickly run a debug
+    batch_file_path = runtime_path + os.sep  + '/debug.bat'
+    debug_line = 'start cmd.exe /k "cd.. && xfoil.exe < ' + './RunTime_' + str(runtime_id) + '/instructions.txt"'
+
+    f2=open(batch_file_path, 'w')
+    f2.write(debug_line)
+    f2.close()
 
 
     return runtime_id
@@ -127,11 +138,12 @@ def read_XFOIL_results(xfoil_path, runtime_id):
     alpha_eff_max   = alpha[i_eff_max]
 
     # Assign output
-    results['Alpha'] = alpha
-    results['CL'] = cl
-    results['CD'] = cd
-    results['E_max'] = eff_max
-    results['Alpha_E_max'] = alpha_eff_max
+    results['Alpha']        = alpha
+    results['CL']           = cl
+    results['CD']           = cd
+    results['E']            = eff
+    results['E_max']        = eff_max
+    results['Alpha_E_max']  = alpha_eff_max
 
     return results
 
@@ -149,7 +161,7 @@ def create_airfoil_geometry(m, p, t, plot_shape = False):
     """
 
     # Recover correct order of magnitude
-    t = t / 100
+    t = t/100
     p = p/10
     m = m/100
 
@@ -162,7 +174,7 @@ def create_airfoil_geometry(m, p, t, plot_shape = False):
     dyc_dx = np.zeros_like(x)
 
 
-    if p!=0:
+    if m!=0:
 
         # Compute the camber line
         for i in range(len(x)):
@@ -188,6 +200,9 @@ def create_airfoil_geometry(m, p, t, plot_shape = False):
         xi = x[i]
         yt[i] = (t/0.2)*(0.2969*sqrt(xi) - 0.1260*xi -0.3516*(xi**2) + 0.2843*(xi**3) -0.1015*(xi**4))
 
+
+
+
     # Compute upper/lower surfaces
     xup = x - yt*np.sin(theta)
     yup = yc + yt * np.cos(theta)
@@ -195,10 +210,15 @@ def create_airfoil_geometry(m, p, t, plot_shape = False):
     xdn = x + yt * np.sin(theta)
     ydn = yc - yt * np.cos(theta)
 
+    # Override x[0],y[0] to avoid numerical issues set == 0
+    xup[0] = 0
+    xdn[0] = 0
+    yup[0] = 0
+    ydn[0] = 0
 
     # Create airfoil shape to output
-    xairf = np.concatenate((np.flip(xup), xdn))
-    yairf = np.concatenate((np.flip(yup), ydn))
+    xairf = np.concatenate((np.flip(xup), xdn[1:]))
+    yairf = np.concatenate((np.flip(yup), ydn[1:]))
 
     airfoil_shape = [xairf, yairf]
 
@@ -217,9 +237,13 @@ def plot_airfoil_shape(airfoil_shape):
     Plot the upper and lower shape of an airfoil
     """
 
+
+
     fig, ax = plt.subplots()
 
+
     ax.plot(airfoil_shape[0], airfoil_shape[1], color='b')
+
 
     ax.set_xlabel("X", fontsize=12)
     ax.set_ylabel("Y", fontsize=12)

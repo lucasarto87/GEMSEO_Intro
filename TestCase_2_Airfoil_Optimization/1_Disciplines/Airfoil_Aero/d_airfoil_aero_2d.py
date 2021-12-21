@@ -2,9 +2,9 @@
 import os, sys
 import numpy as np
 
-# Add project folders
-root = os.path.dirname(os.path.abspath(__file__).split('TestCase_2_Airfoil_Optimization')[0])
-
+# Add required folders
+root = os.path.dirname(os.path.abspath(__file__).split('1_Disciplines')[0])
+sys.path.append(root + os.sep + '1_Disciplines' + os.sep + 'Airfoil_Aero')
 
 from gemseo.core.discipline import MDODiscipline
 from f_airfoil_aero_2d import create_airfoil_geometry, \
@@ -21,16 +21,16 @@ class AirfoilAero2D(MDODiscipline):
         if  xfoil_path:
             self.xfoil_path = xfoil_path
         else:
-            self.xfoil_path = root +os.sep + 'TestCase_2_Airfoil_Optimization' + os.sep + '4_Tools' + os.sep + 'XFOIL'
+            self.xfoil_path = root +os.sep + '4_Tools' + os.sep + 'XFOIL'
 
         # Clear all runtime folders from XFOIl
         clear_runtime_folders(self.xfoil_path)
 
 
         # Define inputs >> Name, type and default value
-        dictIn = {'NACA_M': 2.0,         # maximum airfoil camber
-                  'NACA_P': 4.0,         # position of maximum camber
-                  'NACA_T': 15.0}        # maximum thickness
+        dictIn = {'NACA_M': np.array([2.0]),         # maximum airfoil camber
+                  'NACA_P': np.array([4.0]),         # position of maximum camber
+                  'NACA_T': np.array([15.0])}        # maximum thickness
 
 
         # Initialize input grammar and assign default values
@@ -38,10 +38,13 @@ class AirfoilAero2D(MDODiscipline):
         self.default_inputs = dictIn
 
         # Inizialize output grammar and types
-        DictOut = { 'Alpha' : np.array([0.0, 0.0]),
-                    'CL'    : np.array([0.0, 0.0]),
-                    'CD'    : np.array([0.0, 0.0]),
-                    'E_max' : 0.0}
+        DictOut = { 'AirfoilX'  : np.array([0.0]),       # Airfoil geometry (X coordinate)
+                    'AirfoilY'  : np.array([0.0]),       # Airfoil geometry (Y coordinate)
+                    'Alpha'     : np.array([0.0]),       # Angles of attack
+                    'CL'        : np.array([0.0]),       # Lift coefficient
+                    'CD'        : np.array([0.0]),       # Drag coeffiecient
+                    'E'         : np.array([0.0]),       # Aerodynamic efficiency
+                    'E_max'     : 0.0}                   # Max efficiency
 
         self.output_grammar.initialize_from_base_dict(DictOut)
 
@@ -56,7 +59,6 @@ class AirfoilAero2D(MDODiscipline):
         m = dictIn['NACA_M']
         p = dictIn['NACA_P']
         t = dictIn['NACA_T']
-
 
         # Create the airfoil geometry and run an XFOIL simulation
         # ------------------------------------------------------------------------------------
@@ -80,19 +82,36 @@ class AirfoilAero2D(MDODiscipline):
 
         # Send actualized outputs >> to GEMSEO
         # ------------------------------------------------------------------------------------
-        dictOut = { 'Alpha' : results['Alpha'],
-                    'CL'    : results['CL'],
-                    'CD'    : results['CD'],
-                    'E_max' : results['E_max']}
+        dictOut = { 'AirfoilX'  : airfoil[0],
+                    'AirfoilY'  : airfoil[1],
+                    'Alpha'     : results['Alpha'],
+                    'CL'        : results['CL'],
+                    'CD'        : results['CD'],
+                    'E'         : results['E'],
+                    'E_max'     : results['E_max']}
 
         # Save the output in the discipline local store >>> Transmit output to GEMSEO
         self.local_data.update(dictOut)
 
-
+        # Send status
+        print('')
+        print(50*'-')
+        print('NACA_M:    %.2f' % dictIn['NACA_M'])
+        print('NACA_P:    %.2f' % dictIn['NACA_P'])
+        print('NACA_T:    %.2f' % dictIn['NACA_T'])
+        print(50*'-')
+        print('E_max:     %.2f' % dictOut['E_max'])
+        print(50 * '-')
 
 # ----------------------------------------------------------------------------------------
 # Discipline Tester
 # ----------------------------------------------------------------------------------------
 if __name__ == '__main__':
     disc_airf_aero = AirfoilAero2D()
+
+    # Run with custom inputs
+    disc_airf_aero.default_inputs['NACA_M'] = np.array([4.0])
+    disc_airf_aero.default_inputs['NACA_P'] = np.array([4.0])
+    disc_airf_aero.default_inputs['NACA_T'] = np.array([18.0])
+
     disc_airf_aero.execute()

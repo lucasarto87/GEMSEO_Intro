@@ -1,5 +1,5 @@
 load 
-./RunTime_64697720/airfoil_input.dat
+./RunTime_41315213/airfoil_input.dat
 pane 
 oper 
 iter 
@@ -7,11 +7,11 @@ iter
 visc 
 3000000
 pacc 
-./RunTime_64697720/polar_output.dat
+./RunTime_41315213/polar_output.dat
 
 aseq 
 -5
 10
 0.5
 
-exit
+quit
