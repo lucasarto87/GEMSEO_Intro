@@ -304,6 +304,11 @@ if __name__ == '__main__':
                        y_key='CD',
                        )
 
+    # Example of plotting: Compare polar curves for Initial and Optimal
+    pp.plot_comparison(x_key='Alpha',
+                       y_key='E',
+                       )
+
     # Compare scalar results for initial and optimal solutions
     scalarlst = ['-E_max']
 
