@@ -1,0 +1,4 @@
+Max production [pcs/hr]//Fatigue coefficient//Hourly cost [USD]
+8   0.5  25
+6   0.2  18           
+4   0.1  12  
