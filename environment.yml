@@ -1,4 +1,4 @@
-name: gemseo321
+name: gemseo
 channels:
   - conda-forge
   - defaults
@@ -168,4 +168,4 @@ dependencies:
     - wcwidth==0.2.5
     - xlrd==2.0.1
     - xlwt==1.3.0
-prefix: C:\Users\lsartori\Anaconda3\envs\gemseo321
+prefix: C:\Users\lsartori\Anaconda3\envs\gemseo
