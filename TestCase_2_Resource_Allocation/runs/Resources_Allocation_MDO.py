@@ -51,7 +51,7 @@ if __name__ == '__main__':
     ---------------------------------------------------------------------------------------                 
     """
 
-    # Define run identificator
+    # Define run identifier
     output = 'resource_allocation_MDO'
 
     # Initialize the disciplines
