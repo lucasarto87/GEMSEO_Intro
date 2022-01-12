@@ -68,7 +68,6 @@ class TDP(MDODiscipline):
 
         # Compute production constraint
         n_pcs_tot = prod_data['N_pcs_TOT']
-        const_prod = (self.N_pcs_target - n_pcs_tot)/self.N_pcs_target
         const_prod = -(n_pcs_tot - self.N_pcs_target) / self.N_pcs_target
 
 

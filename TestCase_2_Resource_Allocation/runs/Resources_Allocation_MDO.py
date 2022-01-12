@@ -55,7 +55,7 @@ if __name__ == '__main__':
     output = 'resource_allocation_MDO'
 
     # Initialize the disciplines
-    prod  = TDP(N_pcs_target=78)
+    prod  = TDP(N_pcs_target=110)
     costs = TPC()
 
     disciplines = [prod, costs]
@@ -80,7 +80,7 @@ if __name__ == '__main__':
                                objective_name=obj,
                                maximize_objective=False,
                                design_space=ds,
-                               scenario_type='MDO',     # scenario_type='MDO',
+                               scenario_type='MDO',
                                )
 
     # Add constraints
@@ -88,29 +88,19 @@ if __name__ == '__main__':
     scenario.add_constraint("N_pcs_const", "ineq")
 
 
-    # Add observables
-    # --------------------------------------------------------------------------------------
-    # This allows to keep trace of additional quantities in the optimization history
-    #scenario.formulation.add_observable('AirfoilX')
-
     # Run scenario
     # --------------------------------------------------------------------------------------
-    # DOE Options
-    #opts = {'algo':'DiagonalDOE', 'n_samples': 10}
-
     # Optimization options >> COBYLA search method
     opts = {"max_iter": 500, "algo": "NLOPT_COBYLA"}
-
-    # Optimization options >> Classic SQP with gradient approximation
-    #opts = {"max_iter": 30, "algo": "SLSQP"}
-    #scenario.set_differentiation_method(method='finite_differences', step=1e-02)
 
     scenario.execute(opts)
     scenario.print_execution_metrics()
 
     # Post-processing
     # --------------------------------------------------------------------------------------
+    scenario.xdsmize(monitor=False, outdir='.', print_statuses=False, outfilename='ORA_xdsm.html')
     scenario.post_process("OptHistoryView", save=False, show=True)
+
 
     # Save h5 history file
     h5file = root + os.sep + 'runs' + os.sep + 'history_' + output + '.h5'

@@ -64,7 +64,7 @@ class AirfoilAero2D(MDODiscipline):
         # ------------------------------------------------------------------------------------
 
         # Generate an airfoil geometry
-        airfoil = create_airfoil_geometry(m, p, t)
+        airfoil = create_airfoil_geometry(m, p, t,plot_shape=False)
 
         # Create input files for XFOIL
         runtime_id = create_XFOIL_input_files(self.xfoil_path, airfoil)
@@ -110,8 +110,8 @@ if __name__ == '__main__':
     disc_airf_aero = AirfoilAero2D()
 
     # Run with custom inputs
-    disc_airf_aero.default_inputs['NACA_M'] = np.array([4.0])
-    disc_airf_aero.default_inputs['NACA_P'] = np.array([4.0])
-    disc_airf_aero.default_inputs['NACA_T'] = np.array([18.0])
+    disc_airf_aero.default_inputs['NACA_M'] = np.array([0.0])
+    disc_airf_aero.default_inputs['NACA_P'] = np.array([0.0])
+    disc_airf_aero.default_inputs['NACA_T'] = np.array([25.0])
 
     disc_airf_aero.execute()

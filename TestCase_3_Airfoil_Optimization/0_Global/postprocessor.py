@@ -175,7 +175,7 @@ class GEMSEOPostProcess():
 
 
 
-    def plot_comparison(self, x_key='None', y_key='None', it1=None, it2=None):
+    def plot_comparison(self, x_key='None', y_key='None', it1=None, it2=None, equalize=False):
         """
         Plot a comparison of two series of data coming from 2 different iterations of an optimization
         history.
@@ -183,6 +183,7 @@ class GEMSEOPostProcess():
         :param y_key: key/field of the quantity to plot in the Y axis
         :param it1: First iteration to plot (if None, use iteration zero)
         :param it2: Second iteration to plot (if None, use the optimum)
+        :param equalize: Set axis equal
         :return:
         """
 
@@ -203,7 +204,7 @@ class GEMSEOPostProcess():
         data_2_plot     =   [(x_1, y_1), (x_2,y_2)]
         labels          =   ['Iter' + str (it1), 'Iter' + str (it2)]
 
-        self.__simple_plot(data_2_plot, labels, xtag=x_key, ytag=y_key )
+        self.__simple_plot(data_2_plot, labels, xtag=x_key, ytag=y_key, equalize=equalize )
 
 
     def get_iteration(self, it=None):
@@ -226,7 +227,7 @@ class GEMSEOPostProcess():
         return it_data
 
 
-    def __simple_plot(self, data, labels, cmap=None, xtag='X Data', ytag='Y Data' ):
+    def __simple_plot(self, data, labels, cmap=None, xtag='X Data', ytag='Y Data', equalize=False ):
         """
         Just a general X,Y plot with some options to specify externally.
         Inputs are defined as lists to allow multiple plots to be compared
@@ -235,6 +236,7 @@ class GEMSEOPostProcess():
         :param cmap: 2D array containing base colors for data series (if None, use internal map)
         :param xtag: Label of the X axis
         :param ytag: Label of the Y axis
+        :param equalize: Set axis equal
         :return:
         """
 
@@ -251,6 +253,10 @@ class GEMSEOPostProcess():
 
         ax.set_xlabel(xtag, fontsize=12)
         ax.set_ylabel(ytag, fontsize=12)
+
+        if equalize:
+            ax.axis('equal')
+
         plt.legend(loc='best')
         ax.grid()
 
@@ -266,6 +272,7 @@ if __name__ == '__main__':
 
     # Identify h5 file
     h5file = './history_test_file.h5'
+    h5file = './../3_Results/history_NACA_4_Aero_Opti.h5'
 
     # Initialize postprocessor
     pp = GEMSEOPostProcess()
@@ -287,11 +294,13 @@ if __name__ == '__main__':
     pp.plot_comparison(x_key='AirfoilX',
                        y_key='AirfoilY',
                        it1=0, it2=5,
+                       equalize=True,
                        )
 
     # Example of plotting: Compare airfoil shapes for Initial and Optimal
     pp.plot_comparison(x_key='AirfoilX',
                        y_key='AirfoilY',
+                       equalize=True
                        )
 
     # Example of plotting: Compare CL-v-Alpha curves for Initial and Optimal

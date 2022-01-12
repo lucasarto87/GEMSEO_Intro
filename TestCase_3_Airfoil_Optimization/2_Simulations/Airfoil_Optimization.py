@@ -97,15 +97,8 @@ if __name__ == '__main__':
 
     # Run scenario
     # --------------------------------------------------------------------------------------
-    # DOE Options
-    # opts = {'algo':'DiagonalDOE', 'n_samples': 3}
-
     # Optimization options >> COBYLA search method
     opts = {"max_iter": 100, "algo": "NLOPT_COBYLA"}
-
-    # Optimization options >> Classic SQP with gradient approximation
-    #opts = {"max_iter": 30, "algo": "SLSQP"}
-    #scenario.set_differentiation_method(method='finite_differences', step=1e-02)
 
     scenario.execute(opts)
     scenario.print_execution_metrics()

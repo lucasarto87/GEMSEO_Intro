@@ -27,7 +27,10 @@ design_space.add_variable("y_1", 1, l_b=-100.0, u_b=100.0, value=ones(1))
 design_space.add_variable("y_2", 1, l_b=-100.0, u_b=100.0, value=ones(1))
 
 # Create scenario
-scenario = create_scenario(disciplines, formulation="IDF", objective_name="obj", design_space=design_space)
+scenario = create_scenario(disciplines,
+                           formulation="MDF",  # formulation="IDF"
+                           objective_name="obj",
+                           design_space=design_space)
 
 # Add constraints
 scenario.add_constraint("c_1", "ineq")
@@ -35,8 +38,11 @@ scenario.add_constraint("c_2", "ineq")
 
 # Run scenario
 scenario.set_differentiation_method("finite_differences", 1e-6)
-scenario.execute(input_data={"max_iter": 10, "algo": "SLSQP"})
+scenario.execute(input_data={"max_iter": 20, "algo": "SLSQP"})
 
 # Post-Process
+scenario.xdsmize(monitor=False, outdir='.', print_statuses=False, outfilename='sellar_xdsm.html')
 scenario.post_process("OptHistoryView", save=False, show=False)
+scenario.post_process("BasicHistory", data_list=["x", "z"], save=False, show=True)
+
 plt.show()
